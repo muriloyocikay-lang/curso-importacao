@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Curso de Importação</title><link rel="icon" href="/favicon.webp"><link rel="stylesheet" href="/style.css"></head>
+<body>
+<div class="boxes" aria-hidden="true"><span class="box b1"></span><span class="box b2"></span><span class="box b3"></span><span class="box b4"></span><span class="box b5"></span></div>
+<header><img src="/logo.webp" class="logo" alt=""><div><div class="eyebrow">ÁREA EXCLUSIVA</div><h1>Curso de Importação</h1><p>Conteúdo protegido para alunos autorizados.</p></div></header>
+<main>
+<section id="loginCard" class="card login"><div class="redline"></div><h2>Acesso ao curso</h2><p>Digite seu nome e o código recebido.</p>
+<input id="name" maxlength="40" placeholder="Seu nome" autocomplete="name">
+<input id="code" maxlength="11" placeholder="XXXXX-XXXXX" autocomplete="off">
+<button id="loginBtn">ENTRAR NO CURSO</button><div id="loginMsg" class="msg"></div></section>
+
+<section id="course" class="hidden"><div class="courseTop"><div><span class="pill">ACESSO AUTORIZADO</span><h2>Bem-vindo, <span id="studentName"></span>!</h2></div><div id="expiry" class="expiry"></div></div>
+<div class="videoWrap"><video id="video" controls controlsList="nodownload" disablePictureInPicture playsinline><source src="/curso.mp4" type="video/mp4">Seu navegador não consegue reproduzir este vídeo.</video></div>
+<p class="warning">Não compartilhe seu código. O acesso expira automaticamente 2 dias após o primeiro uso.</p></section>
+
+<section id="adminCard" class="card admin"><div class="redline"></div><h2>Painel administrativo</h2><p>Gere códigos, revogue acessos e veja quem está online.</p>
+<input id="adminPass" type="password" placeholder="Senha do administrador"><button id="adminLoginBtn">ABRIR PAINEL</button>
+<div id="adminPanel" class="hidden"><div class="adminActions"><button id="newCodeBtn">+ GERAR CÓDIGO</button><button id="refreshBtn" class="secondary">ATUALIZAR</button></div>
+<div id="newCode" class="newCode"></div><h3>Online agora</h3><div id="online" class="list"></div><h3>Códigos</h3><div id="codes" class="list"></div></div></section>
+</main><footer>CURSO DE IMPORTAÇÃO • ÁREA PRIVADA</footer><script src="/app.js"></script></body></html>

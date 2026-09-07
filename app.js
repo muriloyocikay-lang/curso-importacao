@@ -1,0 +1,14 @@
+let token=localStorage.getItem("cursoToken"), adminToken=null;
+const $=id=>document.getElementById(id);
+async function api(url,opt={}){const headers={"Content-Type":"application/json",...(opt.headers||{})};if(token)headers.Authorization=`Bearer ${token}`;const r=await fetch(url,{...opt,headers});return r.json();}
+function showCourse(r){$("loginCard").classList.add("hidden");$("course").classList.remove("hidden");$("studentName").textContent=r.name;$("expiry").textContent="Expira em: "+new Date(r.expiresAt).toLocaleString("pt-BR");}
+(async()=>{if(token){const r=await api("/api/me");if(r.ok)showCourse(r);else{localStorage.removeItem("cursoToken");token=null;}}})();
+$("loginBtn").onclick=async()=>{const name=$("name").value.trim(),code=$("code").value.trim();$("loginMsg").textContent="Verificando...";const r=await api("/api/login",{method:"POST",body:JSON.stringify({name,code})});if(r.ok){token=r.token;localStorage.setItem("cursoToken",token);showCourse({...r,name});$("loginMsg").textContent="";}else $("loginMsg").textContent=r.message||"Código inválido.";};
+$("code").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginBtn").click()});
+setInterval(()=>{if(token)api("/api/heartbeat",{method:"POST"});},20000);
+
+async function adminApi(u,o={}){const h={"Content-Type":"application/json","Authorization":`Bearer ${adminToken}`};const r=await fetch(u,{...o,headers:h});return r.json();}
+$("adminLoginBtn").onclick=async()=>{const r=await fetch("/api/admin/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:$("adminPass").value})}).then(x=>x.json());if(r.ok){adminToken=r.token;$("adminPanel").classList.remove("hidden");loadAdmin();}else alert(r.message||"Senha incorreta.");};
+async function loadAdmin(){const [o,c]=await Promise.all([adminApi("/api/admin/online"),adminApi("/api/admin/codes")]);$("online").innerHTML=o.online.length?o.online.map(x=>`<div class="item"><div><b>${x.name}</b><br><small>Código: ${x.code} • online agora</small></div></div>`).join(""):"<div class='item'>Ninguém online no momento.</div>";$("codes").innerHTML=c.codes.length?c.codes.map(x=>`<div class="item"><div><b>${x.code}</b><br><small>${x.firstUsedAt?"Expira: "+new Date(x.expiresAt).toLocaleString("pt-BR"):"Ainda não usado"} • ${x.status}</small></div>${x.status!=="revoked"&&x.status!=="expired"?`<button class="revoke" onclick="revokeCode('${x.code}')">REVOGAR</button>`:""}</div>`).join(""):"<div class='item'>Nenhum código criado.</div>";}
+async function revokeCode(code){await adminApi("/api/admin/revoke",{method:"POST",body:JSON.stringify({code})});loadAdmin();}
+$("newCodeBtn").onclick=async()=>{const r=await adminApi("/api/admin/codes",{method:"POST"});$("newCode").textContent=r.ok?"NOVO CÓDIGO: "+r.code:"Erro ao gerar";loadAdmin();};$("refreshBtn").onclick=loadAdmin;
